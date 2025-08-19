@@ -1,8 +1,23 @@
 import React, { useState } from 'react';
 import { Users, Store, Package, DollarSign, TrendingUp, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 const AdminDashboard = () => {
+  const { isAuthenticated, userRole } = useAuth();
   const [activeTab, setActiveTab] = useState('overview');
+
+  // Redirect if not authenticated or not an admin
+  if (!isAuthenticated || userRole !== 'admin') {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="text-center py-12">
+          <div className="text-6xl mb-4">🔒</div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Access Denied</h2>
+          <p className="text-gray-600">You need to be logged in as an admin to access this dashboard.</p>
+        </div>
+      </div>
+    );
+  }
 
   // Mock admin data
   const platformStats = {

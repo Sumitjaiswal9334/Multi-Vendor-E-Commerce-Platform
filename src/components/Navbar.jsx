@@ -1,11 +1,11 @@
 import React from 'react';
-import { ShoppingCart, User, Store, Shield, Package } from 'lucide-react';
+import { ShoppingCart, User, Store, Shield, Package, LogOut, LogIn } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 
-const Navbar = ({ currentPage, onPageChange }) => {
+const Navbar = ({ currentPage, onPageChange, onLoginClick }) => {
   const { items } = useCart();
-  const { user, userRole, switchRole } = useAuth();
+  const { user, userRole, isAuthenticated, switchRole, logout } = useAuth();
   
   const cartItemCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -55,20 +55,46 @@ const Navbar = ({ currentPage, onPageChange }) => {
           </div>
 
           <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-2">
-              <User className="h-5 w-5 text-gray-700" />
-              <select
-                value={userRole}
-                onChange={(e) => switchRole(e.target.value)}
-                className="text-sm border rounded px-2 py-1"
+            {isAuthenticated ? (
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-2">
+                  <User className="h-5 w-5 text-gray-700" />
+                  <div className="text-sm">
+                    <div className="font-medium text-gray-900">{user.name}</div>
+                    <div className="text-gray-500 capitalize">{userRole}</div>
+                  </div>
+                </div>
+                
+                {/* Role Switcher - Only for demo purposes */}
+                <select
+                  value={userRole}
+                  onChange={(e) => switchRole(e.target.value)}
+                  className="text-sm border rounded px-2 py-1"
+                >
+                  <option value="customer">Customer</option>
+                  <option value="vendor">Vendor</option>
+                  <option value="admin">Admin</option>
+                </select>
+                
+                <button
+                  onClick={logout}
+                  className="flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors"
+                >
+                  <LogOut className="h-4 w-4" />
+                  <span>Logout</span>
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={onLoginClick}
+                className="flex items-center space-x-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
               >
-                <option value="customer">Customer</option>
-                <option value="vendor">Vendor</option>
-                <option value="admin">Admin</option>
-              </select>
-            </div>
+                <LogIn className="h-4 w-4" />
+                <span>Login</span>
+              </button>
+            )}
 
-            {userRole !== 'customer' && (
+            {isAuthenticated && userRole !== 'customer' && (
               <div className="flex space-x-2">
                 {roleItems.map((item) => {
                   const Icon = item.icon;

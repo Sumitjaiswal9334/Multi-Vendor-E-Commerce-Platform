@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { Plus, Edit, Trash2, Package, DollarSign, TrendingUp, Users } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 const VendorDashboard = () => {
+  const { isAuthenticated, userRole, user } = useAuth();
   const [activeTab, setActiveTab] = useState('overview');
   const [showAddProduct, setShowAddProduct] = useState(false);
   const [newProduct, setNewProduct] = useState({
@@ -12,6 +14,19 @@ const VendorDashboard = () => {
     description: '',
     image: 'https://images.pexels.com/photos/90946/pexels-photo-90946.jpeg'
   });
+
+  // Redirect if not authenticated or not a vendor
+  if (!isAuthenticated || userRole !== 'vendor') {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="text-center py-12">
+          <div className="text-6xl mb-4">🔒</div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Access Denied</h2>
+          <p className="text-gray-600">You need to be logged in as a vendor to access this dashboard.</p>
+        </div>
+      </div>
+    );
+  }
 
   // Mock vendor data
   const vendorStats = {
@@ -57,7 +72,7 @@ const VendorDashboard = () => {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Vendor Dashboard</h1>
-        <p className="text-gray-600">Welcome back, TechStore Pro!</p>
+        <p className="text-gray-600">Welcome back, {user?.businessName || user?.name}!</p>
       </div>
 
       {/* Tab Navigation */}

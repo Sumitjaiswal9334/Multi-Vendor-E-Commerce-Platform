@@ -1,8 +1,23 @@
 import React, { useState } from 'react';
 import { Package, Truck, CheckCircle, Clock, MapPin } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 const OrdersPage = () => {
+  const { isAuthenticated } = useAuth();
   const [activeFilter, setActiveFilter] = useState('all');
+
+  // Redirect if not authenticated
+  if (!isAuthenticated) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="text-center py-12">
+          <div className="text-6xl mb-4">🔒</div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Please log in to view your orders</h2>
+          <p className="text-gray-600">You need to be logged in to access your order history.</p>
+        </div>
+      </div>
+    );
+  }
 
   // Mock orders data
   const orders = [

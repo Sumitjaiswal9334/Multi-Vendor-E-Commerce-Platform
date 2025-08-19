@@ -1,12 +1,20 @@
 import React from 'react';
 import { Star, ShoppingCart, Store } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 
 const ProductCard = ({ product, onSelect }) => {
   const { addToCart } = useCart();
+  const { isAuthenticated } = useAuth();
 
   const handleAddToCart = (e) => {
     e.stopPropagation();
+    
+    if (!isAuthenticated) {
+      alert('Please log in to add items to your cart');
+      return;
+    }
+    
     addToCart({
       id: product.id,
       name: product.name,
