@@ -175,7 +175,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 👥 Authors
 
-- **Your Name** - *Initial work* - [YourGitHub](https://github.com/yourusername)
+- **Sumit Kumar Jaiswal** - *Initial work* - [YourGitHub](https://github.com/yourusername)
 
 ## 🙏 Acknowledgments
 
@@ -190,7 +190,7 @@ If you have any questions or need help with the project, please:
 
 1. Check the [Issues](https://github.com/yourusername/multi-vendor-shopping-platform/issues) page
 2. Create a new issue if your question isn't already addressed
-3. Reach out via email: your.email@example.com
+3. Reach out via email: sumitjaiswalskj9334@gmail.com
 
 ---
 
