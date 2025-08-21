@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import { Trash2, Plus, Minus, CreditCard, Truck } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
+import PaymentForm from '../components/PaymentForm';
 
 const CartPage = () => {
   const { items, updateQuantity, removeFromCart, getTotalPrice, clearCart } = useCart();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [showPaymentForm, setShowPaymentForm] = useState(false);
 
   // Redirect if not authenticated
   if (!isAuthenticated) {
@@ -21,15 +23,38 @@ const CartPage = () => {
     );
   }
 
-  const handleCheckout = async () => {
-    setIsCheckingOut(true);
-    // Simulate payment processing
-    setTimeout(() => {
-      alert('Order placed successfully! You will receive a confirmation email shortly.');
-      clearCart();
-      setIsCheckingOut(false);
-    }, 2000);
+  const handleCheckout = () => {
+    setShowPaymentForm(true);
   };
+
+  const handlePaymentSuccess = (paymentResult) => {
+    alert(`Payment successful! Order ID: ORD-${Date.now()}`);
+    clearCart();
+    setShowPaymentForm(false);
+  };
+
+  const handlePaymentError = (error) => {
+    alert(`Payment failed: ${error}`);
+  };
+
+  const handlePaymentCancel = () => {
+    setShowPaymentForm(false);
+  };
+
+  if (showPaymentForm) {
+    return (
+      <PaymentForm
+        orderData={{
+          items,
+          customerId: user?.id,
+          customerEmail: user?.email
+        }}
+        onPaymentSuccess={handlePaymentSuccess}
+        onPaymentError={handlePaymentError}
+        onCancel={handlePaymentCancel}
+      />
+    );
+  }
 
   if (items.length === 0) {
     return (
@@ -130,11 +155,10 @@ const CartPage = () => {
 
             <button
               onClick={handleCheckout}
-              disabled={isCheckingOut}
-              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed text-white py-3 px-6 rounded-lg font-semibold flex items-center justify-center space-x-2 transition-colors"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-lg font-semibold flex items-center justify-center space-x-2 transition-colors"
             >
               <CreditCard className="h-5 w-5" />
-              <span>{isCheckingOut ? 'Processing...' : 'Checkout'}</span>
+              <span>Secure Checkout</span>
             </button>
             
             <p className="text-xs text-gray-500 text-center mt-4">

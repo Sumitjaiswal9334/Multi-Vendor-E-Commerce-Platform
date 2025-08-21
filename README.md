@@ -34,6 +34,8 @@ A modern, full-featured e-commerce platform built with React that supports multi
 - **Styling**: Tailwind CSS
 - **Icons**: Lucide React
 - **Build Tool**: Vite
+- **Payments**: Stripe Integration
+- **Backend**: Express.js (for payment processing)
 - **State Management**: React Context API
 - **Authentication**: Custom authentication system with role-based access
 - **Development**: ESLint for code quality
@@ -58,6 +60,30 @@ A modern, full-featured e-commerce platform built with React that supports multi
 
 4. **Open your browser**
    Navigate to `http://localhost:5173` to view the application.
+
+## 💳 Payment Setup (Optional)
+
+To enable real payment processing:
+
+1. **Create a Stripe account** at [stripe.com](https://stripe.com)
+2. **Get your API keys** from the Stripe Dashboard
+3. **Copy environment variables**
+   ```bash
+   cp .env.example .env
+   ```
+4. **Add your Stripe keys** to `.env`:
+   ```
+   VITE_STRIPE_PUBLISHABLE_KEY=pk_test_your_key_here
+   STRIPE_SECRET_KEY=sk_test_your_key_here
+   ```
+5. **Start the backend server** (optional for demo):
+   ```bash
+   cd server
+   npm install
+   npm run dev
+   ```
+
+**Note**: The app works in demo mode without real Stripe integration.
 
 ## 🎯 Demo Accounts
 
@@ -114,6 +140,8 @@ src/
 - Advanced product filtering by category, price, and rating
 - Real-time search functionality
 - Shopping cart with quantity management
+- **Secure payment processing with Stripe**
+- **Refund management system**
 - Order tracking with status updates
 - Product reviews and ratings system
 
@@ -126,6 +154,7 @@ src/
 ### Admin Controls
 - Platform-wide statistics and monitoring
 - Vendor approval and management
+- **Payment and refund oversight**
 - Content moderation tools
 - System health monitoring
 
@@ -150,7 +179,10 @@ The build artifacts will be stored in the `dist/` directory.
 
 ## 🔮 Future Enhancements
 
-- [ ] Payment integration (Stripe/PayPal)
+- [x] Payment integration (Stripe)
+- [x] Refund management system
+- [ ] PayPal integration
+- [ ] Subscription billing
 - [ ] Real-time notifications
 - [ ] Advanced analytics dashboard
 - [ ] Multi-language support

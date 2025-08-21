@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
-import { Package, Truck, CheckCircle, Clock, MapPin } from 'lucide-react';
+import { Package, Truck, CheckCircle, Clock, MapPin, RefreshCw } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import RefundModal from '../components/RefundModal';
 
 const OrdersPage = () => {
   const { isAuthenticated } = useAuth();
   const [activeFilter, setActiveFilter] = useState('all');
+  const [showRefundModal, setShowRefundModal] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState(null);
 
   // Redirect if not authenticated
   if (!isAuthenticated) {
@@ -26,6 +29,8 @@ const OrdersPage = () => {
       date: '2024-01-15',
       status: 'delivered',
       total: 89.99,
+      paymentIntentId: 'pi_1234567890',
+      customer: 'John Doe',
       items: [
         { name: 'Wireless Headphones', price: 89.99, quantity: 1, image: 'https://images.pexels.com/photos/3394650/pexels-photo-3394650.jpeg' }
       ],
@@ -37,6 +42,8 @@ const OrdersPage = () => {
       date: '2024-01-12',
       status: 'shipped',
       total: 299.98,
+      paymentIntentId: 'pi_0987654321',
+      customer: 'John Doe',
       items: [
         { name: 'Smart Watch', price: 199.99, quantity: 1, image: 'https://images.pexels.com/photos/393047/pexels-photo-393047.jpeg' },
         { name: 'Charging Cable', price: 19.99, quantity: 5, image: 'https://images.pexels.com/photos/163100/circuit-circuit-board-resistor-computer-163100.jpeg' }
@@ -49,6 +56,8 @@ const OrdersPage = () => {
       date: '2024-01-10',
       status: 'processing',
       total: 49.99,
+      paymentIntentId: 'pi_1122334455',
+      customer: 'John Doe',
       items: [
         { name: 'Bluetooth Speaker', price: 49.99, quantity: 1, image: 'https://images.pexels.com/photos/3394664/pexels-photo-3394664.jpeg' }
       ],
@@ -78,6 +87,16 @@ const OrdersPage = () => {
   const getStatusColor = (status) => {
     const config = statusConfig[status];
     return `bg-${config.color}-100 text-${config.color}-800`;
+  };
+
+  const handleRefundClick = (order) => {
+    setSelectedOrder(order);
+    setShowRefundModal(true);
+  };
+
+  const handleRefundSuccess = (refundResult) => {
+    alert(`Refund processed successfully! Refund ID: ${refundResult.id}`);
+    // In a real app, you would update the order status
   };
 
   return (
@@ -171,6 +190,15 @@ const OrdersPage = () => {
                       Leave Review
                     </button>
                   )}
+                  {(order.status === 'delivered' || order.status === 'shipped') && (
+                    <button 
+                      onClick={() => handleRefundClick(order)}
+                      className="bg-red-100 text-red-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-200 flex items-center"
+                    >
+                      <RefreshCw className="h-4 w-4 mr-1" />
+                      Request Refund
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
@@ -187,6 +215,14 @@ const OrdersPage = () => {
           </p>
         </div>
       )}
+
+      {/* Refund Modal */}
+      <RefundModal
+        isOpen={showRefundModal}
+        onClose={() => setShowRefundModal(false)}
+        order={selectedOrder}
+        onRefundSuccess={handleRefundSuccess}
+      />
     </div>
   );
 };

@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
-import { Plus, Edit, Trash2, Package, DollarSign, TrendingUp, Users } from 'lucide-react';
+import { Plus, Edit, Trash2, Package, DollarSign, TrendingUp, Users, RefreshCw } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import RefundModal from '../components/RefundModal';
 
 const VendorDashboard = () => {
   const { isAuthenticated, userRole, user } = useAuth();
   const [activeTab, setActiveTab] = useState('overview');
   const [showAddProduct, setShowAddProduct] = useState(false);
+  const [showRefundModal, setShowRefundModal] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState(null);
   const [newProduct, setNewProduct] = useState({
     name: '',
     price: '',
@@ -43,10 +46,20 @@ const VendorDashboard = () => {
   ];
 
   const recentOrders = [
-    { id: 1, customer: 'John Doe', product: 'Wireless Headphones', amount: 89.99, status: 'Shipped' },
-    { id: 2, customer: 'Jane Smith', product: 'Smart Watch', amount: 199.99, status: 'Processing' },
-    { id: 3, customer: 'Mike Johnson', product: 'Bluetooth Speaker', amount: 49.99, status: 'Delivered' },
+    { id: 1, customer: 'John Doe', product: 'Wireless Headphones', amount: 89.99, status: 'Shipped', paymentIntentId: 'pi_1234567890', total: 89.99 },
+    { id: 2, customer: 'Jane Smith', product: 'Smart Watch', amount: 199.99, status: 'Processing', paymentIntentId: 'pi_0987654321', total: 199.99 },
+    { id: 3, customer: 'Mike Johnson', product: 'Bluetooth Speaker', amount: 49.99, status: 'Delivered', paymentIntentId: 'pi_1122334455', total: 49.99 },
   ];
+
+  const handleRefundClick = (order) => {
+    setSelectedOrder(order);
+    setShowRefundModal(true);
+  };
+
+  const handleRefundSuccess = (refundResult) => {
+    alert(`Refund processed successfully! Refund ID: ${refundResult.id}`);
+    // In a real app, you would update the order status
+  };
 
   const handleAddProduct = (e) => {
     e.preventDefault();
@@ -326,6 +339,14 @@ const VendorDashboard = () => {
         </div>
       )}
 
+      {/* Refund Modal */}
+      <RefundModal
+        isOpen={showRefundModal}
+        onClose={() => setShowRefundModal(false)}
+        order={selectedOrder}
+        onRefundSuccess={handleRefundSuccess}
+      />
+
       {/* Orders Tab */}
       {activeTab === 'orders' && (
         <div className="bg-white rounded-lg shadow-md">
@@ -386,6 +407,15 @@ const VendorDashboard = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <button className="text-blue-600 hover:text-blue-900">View Details</button>
+                      {(order.status === 'Delivered' || order.status === 'Shipped') && (
+                        <button 
+                          onClick={() => handleRefundClick(order)}
+                          className="ml-3 text-red-600 hover:text-red-900 flex items-center"
+                        >
+                          <RefreshCw className="h-4 w-4 mr-1" />
+                          Refund
+                        </button>
+                      )}
                     </td>
                   </tr>
                 ))}
